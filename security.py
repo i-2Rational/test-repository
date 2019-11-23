@@ -1,0 +1,21 @@
+from werkzeug.security import safe_str_cmp
+from models.user import UserModel
+
+
+def authenticate(username, password):
+    # we retreive user object with the mapping
+    user = UserModel.find_by_username(username)
+    # compare the user and password
+    if user and safe_str_cmp(user.password, password):
+        # if they match, we return user that is used to generate token
+        return user
+
+# setiap kali mereka req endpoint yang butuh authentication,
+# kita pake identity method, terus kita dapet payload coming from
+# request dan kita masukin payload ke jadi parameter identity
+
+
+def identity(payload):
+    # di payload ini, ada identity yang merupakan user id
+    user_id = payload['identity']
+    return UserModel.find_by_id(user_id)
